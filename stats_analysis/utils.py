@@ -5,24 +5,23 @@ List all functions:
  1. binning
  2. calculate_CramersV
  3. create_model
- 4. fix_vars
- 5. normalize_grower_document
+ 4. fix_strings
+ 5. keep_only_numbers
  6. processing_result
 
 """
 
 from   optbinning              import BinningProcess
 from   scipy.stats             import chi2_contingency
+from   sklearn.preprocessing   import OneHotEncoder
 from   sklearn.model_selection import train_test_split
 from   sklearn                 import tree 
 from   unicodedata             import normalize
 import numpy                   as np
 import pandas                  as pd
+import pickle
 import random
 import re
-
-import pickle
-from sklearn.preprocessing import OneHotEncoder
 
 
 def bivariate_analysis(df, 
