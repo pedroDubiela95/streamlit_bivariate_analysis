@@ -39,7 +39,7 @@ if file is not None:
             special_var = pd.read_csv(path_special_var, sep = ",")
         
     
-    ready = st.sidebar.button("Clique Para Treinar o Modelo de Regressão Logística")
+    ready = st.sidebar.button("Executar")
 ###############################################################################
 
 c1 = st.container()
