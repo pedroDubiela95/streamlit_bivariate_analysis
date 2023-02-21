@@ -48,7 +48,8 @@ def test_bivariate_analysis1():
         # Vai tentar binnar todo mundo
         # Vai manter os missing (trocando NaN por "Missing Values") em todas
         # Não vai realocar specials vars (não utiliza o excel)
-        res = u.bivariate_analysis(df, numerical_variables, categorical_variables, target_variable)
+        res = u.bivariate_analysis(df, target_variable, numerical_variables, 
+                                   categorical_variables)
 
         df1 = pd.read_excel('./source/data_tests/result1.xlsx', index_col=0)
         df1 = df1[['Indicador', 'Categoria', 'Nao_evento', 'Evento', 'Total']]
@@ -66,7 +67,8 @@ def test_bivariate_analysis2():
         # Nao vai binnar ninguém
         # Vai manter os missing (trocando NaN por "Missing Values") em todas
         # Não vai realocar specials vars (não utiliza o excel)
-        res = u.bivariate_analysis(df, numerical_variables, categorical_variables, target_variable, not_binning=not_binning)
+        res = u.bivariate_analysis(df, target_variable, numerical_variables, 
+                                   categorical_variables, not_binning=not_binning)
 
         df2 = pd.read_excel('./source/data_tests/result2.xlsx', index_col=0)
         df2 = df2[['Indicador', 'Categoria', 'Nao_evento', 'Evento', 'Total']]
@@ -84,8 +86,8 @@ def test_bivariate_analysis3():
         # Vai tentar binnar todo mundo
         # Vai retirar linhas com  missing em todas
         # Não vai realocar specials vars (não utiliza o excel)
-        res = u.bivariate_analysis(df, numerical_variables, categorical_variables, 
-                                   target_variable, remove_na=True)
+        res = u.bivariate_analysis(df, target_variable, numerical_variables, 
+                                   categorical_variables, remove_na=True)
 
         df3 = pd.read_excel('./source/data_tests/result3.xlsx', index_col=0)
         df3 = df3[['Indicador', 'Categoria', 'Nao_evento', 'Evento', 'Total']]
@@ -103,8 +105,9 @@ def test_bivariate_analysis4():
         # Nao vai binnar ninguém
         # Vai retirar linhas com  missing em todas
         # Não vai realocar specials vars (não utiliza o excel)
-        res = u.bivariate_analysis(df, numerical_variables, categorical_variables, 
-                                   target_variable, not_binning=not_binning, remove_na=True)
+        res = u.bivariate_analysis(df, target_variable, numerical_variables, 
+                                   categorical_variables, 
+                                   not_binning=not_binning, remove_na=True)
 
         df4 = pd.read_excel('./source/data_tests/result4.xlsx', index_col=0)
         df4 = df4[['Indicador', 'Categoria', 'Nao_evento', 'Evento', 'Total']]
@@ -123,8 +126,8 @@ def test_bivariate_analysis5():
         # Vai manter os missing (trocando NaN por "Missing Values") em todas
         # Vai realocar specials vars (utiliza o excel)
         #
-        res = u.bivariate_analysis(df, numerical_variables, categorical_variables, 
-                                   target_variable, special_var = special_var)
+        res = u.bivariate_analysis(df, target_variable, numerical_variables, 
+                                   categorical_variables, special_var = special_var)
 
         df5 = pd.read_excel('./source/data_tests/result5.xlsx', index_col=0)
         df5 = df5[['Indicador', 'Categoria', 'Nao_evento', 'Evento', 'Total']]
@@ -133,15 +136,26 @@ def test_bivariate_analysis5():
         
         assert r.all().all() == True
    
-
-
-
-
-
-
     
+def test_bivariate_analysis6():
+        (df, numerical_variables, categorical_variables, 
+        target_variable, not_binning, special_var) = params_bivariate_analysis()
+        
+        # 5
+        # Vai tentar binnar todo mundo
+        # Vai manter os missing (trocando NaN por "Missing Values") em todas
+        # Vai realocar specials vars (utiliza o excel)
+        # Vai forçar todas as variáveis a serem categóricas
+        
+        res = u.bivariate_analysis(df, target_variable, special_var = special_var)
+        df6 = pd.read_excel('./source/data_tests/result6.xlsx', index_col=0)
+        df6 = df6[['Indicador', 'Categoria', 'Nao_evento', 'Evento', 'Total']]
+        res = res[['Indicador', 'Categoria', 'Nao_evento', 'Evento', 'Total']]
+        r = df6 == res
+        
+        assert r.all().all() == True
 
-    
+
 
 
 

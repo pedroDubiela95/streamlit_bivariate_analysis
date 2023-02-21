@@ -25,14 +25,119 @@ import re
 
 
 def bivariate_analysis(df, 
-                       numerical_variables, 
-                       categorical_variables, 
-                       target_variable, 
+                       target_variable,
+                       numerical_variables = None, 
+                       categorical_variables = None,  
                        special_var = None, 
                        not_binning = [],
                        l1          = 0.11,
                        l2          = 0.30,
                        remove_na   = False):
+    """
+        This is a function that performs bivariate analysis by evaluating the 
+        degree of association between two variables. It resorts to binning 
+        techniques and the Cramer’s V calculus.
+        The individual influence of each variable on the target variable 
+        (categorical or discrete numeric) is evaluated.
+        A pandas dataframe containing all the variables including the target 
+        variable is passed.
+        Variables can be numeric and/or categorical. If the variable is numeric, a 
+        process is performed to convert it to categorical ranges.
+        You must inform only one target variable and at least one more
+        variable to compare (numeric or categorical).
+        - If not specified, variables will be treated as categories by default.
+        - Whenever using special_var, you must inform the name of all the variables 
+          that are in the dataframe, even if it does not have a special value.
+        - You can enter None or leave it blank when the variable has no special 
+          value in special_var.
+        - You can enter up to 3 types of special values per variable in 
+          special_var.
+        - If the variable that enters is of type float, it is necessary to put the 
+          special values in the special_var file with the same number of decimal 
+          places.
+        - NaN values will never appear, because either the lines will be removed, 
+          or they will be replaced by the string “Missing Values”
+        - If you want to not binnind one or more variables before calculating the 
+          degree of association, just inform the name in the not_binnig list    
+    
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Dataframe with the variables that will be analyzed.
+        target_variable : str
+            Target variable name
+        numerical_variables : list, optional
+            Numerical variable names
+        categorical_variables : list, optional
+            Categorical variable names
+        special_var : pd.DataFrame, optional
+            Dataframe with all variables and their special value types if any.
+            ___________________________________________________________________
+                ...........................................
+            Ex: |variable_name | value1 | value2 | value3 |
+                |var_A         | None   | None   | None   |
+                |var_B         |        |        |        |
+                |var_C         |-98     | -97    | -96    |
+                |var_D         |-98.0   |        | -96.0  |
+                ¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
+                In this case:
+                var_A: It hasn't special value
+                var_B: It hasn't special value
+                var_C: It has special value, which are integers (-98, -97, -96)
+                var_D: It has special value, which are float (-98.0, -96.0)
+            ___________________________________________________________________
+            
+        not_binning : lsit, optional
+            Variables that will be calculated without being binned.
+        l1 : float, optional
+            Below this value will be considered low discrimination. 
+            The default is 0.11.
+        l2 : float, optional
+            Above this value will be considered high discrimination. 
+            The default is 0.30.
+        remove_na : bool, optional
+            If True, the rows which contains NaN will be removed. 
+            If False, all NaN values will be replaced with 'Missing Values'. 
+            The default is False.
+
+        Returns
+        -------
+        df_res: pd.DataFrame
+            A pd.DataFrame with the bivariate analysis result
+
+    """
+ 
+    # Validates
+    
+    if isinstance(df, pd.core.frame.DataFrame):
+        if df.shape[0] >= 1:
+            if target_variable in df.columns:
+                
+                variable_names  = df.columns.tolist()
+                
+                if (numerical_variables == None and  
+                    categorical_variables == None):
+                    
+                    categorical_variables = [item for item in variable_names 
+                                             if item != target_variable]
+                    numerical_variables = []
+                
+                elif(numerical_variables == None):
+                    numerical_variables = []
+                    
+                elif(categorical_variables == None):
+                    categorical_variables = []
+                    
+                else:
+                    pass
+                
+            else:
+                raise("Incorrectly target_variable")
+        else:
+            raise("df must have at least 1 row")
+    else:
+        raise("df must be a pd.DataFrame")
+    
 
     # Filter
     df = df[numerical_variables + categorical_variables + [target_variable]]
@@ -82,7 +187,7 @@ def bivariate_analysis(df,
        
             if has_special:
                 
-                status = f"It has Special Values!"
+                status = "It has Special Values!"
     
                 c = df_aux[var_name].astype(str).isin(special)
                 
