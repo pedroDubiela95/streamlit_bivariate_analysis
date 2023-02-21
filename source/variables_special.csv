@@ -1,51 +1,8 @@
 variable_name,value1,value2,value3
-cat_all_others_approved_tickets_recency_t24,-99,None,None
-cat_all_others_reproved_tickets_recency_t24,-99,None,None
-cat_grower_city,Not found on MD,None,None
-cat_grower_district,Not found on MD,None,None
-cat_grower_region,Not found on MD,None,None
-cat_grower_state,Not found on MD,None,None
-cat_last_transaction_recency,0,None,None
-cat_planting_city,Not found on SALES,None,None
-cat_planting_region,Not found on SALES,None,None
-cat_planting_uf,Not found on SALES,None,None
-cat_ticket_recency,-99,None,None
-flag_pending_list,None,None,None
-flag_pre_certified_actual_harvest,None,None,None
-flag_sales_partner,-99,None,None
-flag_sold_bags_growth,-99,-98,-97
-flag_ticket_opened_date_limit_actual_harvest,-99,None,None
-flag_ticket_opened_date_limit_last_harvest,-99,None,None
-qt_all_others_approved_tickets_t12,0,None,None
-qt_all_others_approved_tickets_t24,0,None,None
-qt_all_others_reproved_tickets_t12,0,None,None
-qt_all_others_reproved_tickets_t24,0,None,None
-qt_approved_add_vol_tickets_actual_harvest,0,None,None
-qt_approved_add_vol_tickets_last_harvest,0,None,None
-qt_approved_add_vol_tickets_t12,0,None,None
-qt_approved_add_vol_tickets_t24,0,None,None
-qt_approved_add_vol_tickets_t6,0,None,None
-qt_approved_ev_transf_tickets_actual_harvest,0,None,None
-qt_approved_ev_transf_tickets_t12,0,None,None
-qt_approved_ev_transf_tickets_t24,0,None,None
-qt_approved_ev_transf_tickets_t6,0,None,None
-qt_approved_grower_bond_tickets_last_harvest,0,None,None
-qt_approved_grower_bond_tickets_t24,0,None,None
-qt_approved_tickets_actual_harvest,0,0,0
-qt_approved_tickets_t24,0,None,None
-qt_planted_area_refuge,0,None,None
-qt_productivity,0,None,None
-qt_reproved_add_vol_tickets_t24,0,None,None
-qt_sold_bags_21_22_harvest,0,None,None
-qt_sold_bags_actual_harvest,0,None,None
-qt_sold_bags_last_harvest,0,None,None
-qt_sold_bags_t12,0,None,None
-qt_sold_bags_t24,0,None,None
-qt_volume_transf_actual_harvest,0,None,None
-qt_volume_transf_t12,0,None,None
-qt_volume_transf_t24,0,None,None
-Col1,None,None,None
-Col2,None,None,None
-Col3,None,None,54
-Col4,None,"39,2",None
-Cat,None,None,None
+var_A,None,None,None
+var_B,,,
+var_C,-96,-97,-98
+var_D,,,
+var_E,,,
+var_F,,,
+var_G,,,

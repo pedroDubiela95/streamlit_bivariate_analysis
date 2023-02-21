@@ -50,7 +50,7 @@ def bivariate_analysis(df,
     else:
         df.fillna('Missing Value', inplace = True)
         
-    # special
+
     cols = df.drop([target_variable], axis = 1 ).columns
     
     # Result
@@ -81,10 +81,13 @@ def bivariate_analysis(df,
         if var_name not in not_binning:
        
             if has_special:
-                status = f"It has special: {special}"
-        
-                df_without_special = df_aux[~df_aux[var_name].isin(special)]
-                df_with_special    = df_aux[df_aux[var_name].isin(special)]
+                
+                status = f"It has Special Values!"
+    
+                c = df_aux[var_name].astype(str).isin(special)
+                
+                df_without_special = df_aux[~c].reset_index(drop = True)
+                df_with_special    = df_aux[c].reset_index(drop = True)
                 
                 is_possible = df_without_special[target_variable].unique().shape[0] > 1
                 
@@ -95,7 +98,6 @@ def bivariate_analysis(df,
                     # Binning
                     categorical_var = [var_name] if var_name in categorical_variables else None
                     result  = binning(df_without_special, target_variable, categorical_var)
-                    #summary = result[0]
                     df      = result[1]
                     
                 else:
@@ -108,7 +110,7 @@ def bivariate_analysis(df,
                 df = pd.concat([df_with_special, df])
                 
             else:
-                status = f"It hasn't special: {special}"
+                status = "It hasn't Special Values"
                 
                 is_possible = df_aux[target_variable].unique().shape[0] > 1
                 
@@ -119,7 +121,6 @@ def bivariate_analysis(df,
                     # Binning
                     categorical_var = [var_name] if var_name in categorical_variables else None
                     result  = binning(df_aux, target_variable, categorical_var)
-                    #summary = result[0]
                     df      = result[1]
                 
                 else:
@@ -206,6 +207,7 @@ def binning(df, target_variable, categorical_variables = None):
         
     """
     
+
     # All variables in df
     variable_names = np.ndarray.tolist(df.columns.values) 
 
