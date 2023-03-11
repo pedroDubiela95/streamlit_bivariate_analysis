@@ -1,5 +1,3 @@
-
-
 # Imports
 from   stats_analysis import utils as u
 import pandas                      as pd
@@ -11,7 +9,7 @@ import streamlit                   as st
 #st.sidebar.header('df e Variáveis')
 # Load
 st.sidebar.markdown("""# Variables""")
-file                  = st.sidebar.file_uploader("## Upload your file", type={"csv"})
+file  = st.sidebar.file_uploader("## Upload your file", type={"csv"})
 ready = False
 
 # Columns
@@ -22,22 +20,25 @@ if file is not None:
     # Columns
     all_options_cols = df.columns.to_list() + ['All']
     
-    # deixar tem que tratar o all o nonme
+    # Numericals
     numericals = st.sidebar.multiselect('Numerical Vars', all_options_cols)
-    categoricals = list(set(all_options_cols) - set(numericals))
+    all_options_cols = list(set(all_options_cols) - set(numericals))
     
-    categoricals = st.sidebar.multiselect('Categorical Vars', categoricals) 
-    #numericals = st.sidebar.radio("Regularização:", categoricals)
+    # Categoricals
+    categoricals = st.sidebar.multiselect('Categorical Vars', all_options_cols)
+    all_options_cols = list(set(all_options_cols) - set(categoricals))
+    
+    # Target
+    target = st.sidebar.selectbox('Target Var', df.columns.to_list()) 
+    all_options_cols = list(set(all_options_cols) - set(target))
+    
+    if 'All' in numericals:
+        numericals = ['All']
+        categoricals = []
 
-    there_is_special_vars = st.sidebar.radio("Is there Special Vars:", ('No', 'Yes'))
-
-    # Load Special
-    special_var = None
-    if there_is_special_vars == 'Yes':
-        path_special_var = st.sidebar.file_uploader("## Upload you Sp", type={"csv"})
-        if path_special_var is not None:
-            special_var = pd.read_csv(path_special_var, sep = ",")
-        
+    if 'All' in categoricals:
+        categoricals = ['All']
+        numericals = []
     
     ready = st.sidebar.button("Executar")
 ###############################################################################
@@ -50,7 +51,7 @@ c2 = st.container()
 
 with c1:
     st.markdown(""" 
-                # DUB_analysis
+                # Analysis
                 ## Analisador de variáveis
                 Esta aplicação web tem por objetivo realizar uma análise de dados 
                 detalhada em um df.
@@ -59,74 +60,36 @@ with c1:
 if file is not None:
     
     with tab1:
-        st.write("Amostra", df.head())
+        st.write("Amostra", df.head().style.format(precision=2))
     
     with tab2:
-        st.write("Describe", df.describe())
+        st.write("Describe", df.describe().style.format(precision=2))
     
     with tab3:
         nans = df.isna().sum().to_frame(name = "NaN Quantity")
         st.write("NaN", nans)
     
 
-
-# Definindo as numéricas
-numerical_variables = ['Col1','Col2'] 
-              
-# Definindo as categóricas (inclui numérica discreta)
-categorical_variables = ['Col3', 'Col4', 'Cat']
-
-# Definindo target
-target_variable = 'flag'
-
-
-not_binning = ['Col3', 'Col4']
-remove_na = False
-not_binning = []
-l1          = 0.11
-l2          = 0.30
-
-#df = pd.read_csv("./source/file_test.csv", sep = ',')
-#special_var = pd.read_csv("./source/variables_special.csv", sep = ",")
-
 if file is not None:
+
+
+    # Definindo as numéricas
+    numerical_variables = numericals
+                  
+    # Definindo as categóricas (inclui numérica discreta)
+    categorical_variables = categoricals
     
-    if there_is_special_vars == 'No':
+    # Definindo target
+    target_variable = target
     
-        df_res = u.bivariate_analysis(
-            df                    = df, 
-            numerical_variables   = numerical_variables, 
-            categorical_variables = categorical_variables, 
-            target_variable       = target_variable, 
-            remove_na             = remove_na,
-            not_binning           = not_binning,
-            l1                    = l1,
-            l2                    = l2,
-            special_var           = special_var)
-    else:
-        if special_var is not None:
+    df[numericals] = df[numericals].astype('float64')
+    
+    if ready:
+        with c2:
             
-            df_res = u.bivariate_analysis(
-                df                    = df, 
-                numerical_variables   = numerical_variables, 
-                categorical_variables = categorical_variables, 
-                target_variable       = target_variable, 
-                remove_na             = remove_na,
-                not_binning           = not_binning,
-                l1                    = l1,
-                l2                    = l2,
-                special_var           = special_var)
+            for var in numericals:
 
+                st.markdown(var)
+                res = u.exploratory_data_analysis_numerical(df, var)
+                st.write(res.style.format(precision=2))
 
-if ready:
-    with c2:
-        
-        if special_var is not None:
-            st.markdown("Special Var Table")
-            st.write(special_var)
-        
-        st.markdown("Bivariate Analysis")
-        st.write(df_res)
-
-
-#df_res.to_excel('./bivariate_analysis.xlsx', index=False) 

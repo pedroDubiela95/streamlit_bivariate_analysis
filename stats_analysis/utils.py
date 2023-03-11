@@ -680,3 +680,61 @@ def processing_result(**kargs):
     return arr_res
 
 
+def exploratory_data_analysis_numerical(df, var, q = [1, 25, 50, 75, 95, 98, 99]):
+    '''
+    This fucntion creates a exploratory_data_analysis from a numerical variable
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A DataFrame which must contains the var.
+    var : str
+        The variable name.
+    q : list, optional
+        Percentils. The default is [1, 25, 50, 75, 95, 98, 99].
+    
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame with the statistics about the var.
+    
+    '''
+    
+    # Delete NaN
+    df.dropna(inplace = True)
+    df.reset_index(drop = True, inplace = True)
+    
+    # Aggregate by SUM, CNT, AVG, STDEV, MIN and MAX
+    df_calc = df.loc[:, var].agg(SUM   = 'sum', 
+                                 CNT   = 'count', 
+                                 AVG   = np.mean,
+                                 STDEV = np.std, 
+                                 MIN   = np.min, 
+                                 MAX   = np.max).reset_index().T
+    
+    # Renamne
+    df_calc.rename(columns = df_calc.iloc[0, :], inplace = True)
+    df_calc.drop(index = 'index', axis = 0, inplace = True)
+    
+    
+    # Calculate percentis
+    percentis = np.array(np.percentile(a = df.loc[:, var], q = q)).reshape(1,-1)
+    
+    
+    P = ['P'+ str(i) for i in q]
+    
+    df_percentis = pd.DataFrame(
+        columns  = P,
+        data     = percentis,
+        index    = [var])
+    
+    # Merge
+    df_final = pd.concat([df_calc, df_percentis], axis = 1)
+    
+    # Order
+    df_final = df_final[df_calc.columns[0:-1].tolist() + 
+                        df_percentis.columns.tolist()  + 
+                        [df_calc.columns[-1]]]    
+    
+    
+    return df_final.astype('float64').round(2)
