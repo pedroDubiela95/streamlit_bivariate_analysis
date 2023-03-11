@@ -14,7 +14,7 @@ ready = False
 
 # Columns
 if file is not None:
-    df = pd.read_csv(file)
+    df = pd.read_csv(file, sep = ';', index_col = 0)
     st.markdown("""Resumo dos Dados""")
 
     # Columns
