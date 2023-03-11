@@ -15,7 +15,7 @@ ready = False
 # Columns
 if file is not None:
     df = pd.read_csv(file, sep = ';', index_col = 0)
-    st.markdown("""Resumo dos Dados""")
+    st.markdown("""Data Summaries""")
 
     # Columns
     all_options_cols = df.columns.to_list() + ['All']
@@ -52,15 +52,17 @@ c2 = st.container()
 with c1:
     st.markdown(""" 
                 # Analysis
-                ## Analisador de variáveis
-                Esta aplicação web tem por objetivo realizar uma análise de dados 
-                detalhada em um df.
+                ## Exploratory Data Analysis
+                This web application aims to perform an exploratory analysis on a set of data stored in csv format.
+                Please ensure that the csv file is separated by (;) and not by (.)
+                
+                Owner: Pedro G. Dubiela | pedro.dubielabio@gmail.com | https://github.com/pedroDubiela95
                 """)
 
 if file is not None:
     
     with tab1:
-        st.write("Amostra", df.head().style.format(precision=2))
+        st.write("Sample", df.head().style.format(precision=2))
     
     with tab2:
         st.write("Describe", df.describe().style.format(precision=2))
