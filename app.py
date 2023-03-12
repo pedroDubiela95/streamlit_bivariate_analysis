@@ -11,41 +11,54 @@ import streamlit                   as st
 st.sidebar.markdown("""# Variables""")
 file  = st.sidebar.file_uploader("## Upload your file", type={"csv"})
 ready = False
+sep = st.sidebar.radio(
+        "## Choose file separator",
+        key     = "visibility", 
+        options = [",", ";"])
+
 
 # Columns
 if file is not None:
-    df = pd.read_csv(file, sep = ';', index_col = 0)
+    
+    if sep == ';':
+        df = pd.read_csv(file, sep = sep, index_col = 0)
+    else:
+        df = pd.read_csv(file, sep = sep)
+        
     st.markdown("""Data Summaries""")
+    
+    there_is_numericals   = st.sidebar.selectbox('Is there numerical variables ?', ['Yes', 'No'], index = 1)
+    there_is_categoricals = st.sidebar.selectbox('Is there categoricals variables ?', ['Yes', 'No'], index = 1)
+    
+    there_is_numericals   = True if there_is_numericals == 'Yes' else False
+    there_is_categoricals = True if there_is_categoricals == 'Yes' else False
 
-    # Columns
-    all_options_cols = df.columns.to_list() + ['All']
+    if there_is_numericals and there_is_categoricals :
+
+        d = {}
+        for col in df.columns:
+            d[col] = st.sidebar.selectbox(col, ['Numerical', 'Categorical'], index = 1)
+             
+        numericals   = [key for key, value in d.items() if value == 'Numerical']
+        categoricals = [key for key, value in d.items() if value == 'Categorical']
     
-    # Numericals
-    numericals = st.sidebar.multiselect('Numerical Vars', all_options_cols)
-    all_options_cols = list(set(all_options_cols) - set(numericals))
-    
-    # Categoricals
-    categoricals = st.sidebar.multiselect('Categorical Vars', all_options_cols)
-    all_options_cols = list(set(all_options_cols) - set(categoricals))
-    
-    # Target
-    target = st.sidebar.selectbox('Target Var', df.columns.to_list()) 
-    all_options_cols = list(set(all_options_cols) - set(target))
-    
-    if 'All' in numericals:
-        numericals = ['All']
+    if there_is_numericals and not there_is_categoricals:
+        numericals   = df.columns.tolist()
         categoricals = []
+        
+    if there_is_categoricals and not there_is_numericals:
+        categoricals     = df.columns.tolist()
+        numericals       = []
 
-    if 'All' in categoricals:
-        categoricals = ['All']
-        numericals = []
-    
-    ready = st.sidebar.button("Executar")
+    ready = st.sidebar.button("RUN")
 ###############################################################################
 
+# Containers
 c1 = st.container()
-tab1, tab2, tab3 = st.tabs(['Dataset Sample', 'Describe', 'NaN Quantity'])
+tab1, tab2 = st.tabs(['Dataset Sample', 'NaN Quantity'])
+ 
 c2 = st.container()
+
 
 # Texto inicial
 
@@ -54,44 +67,42 @@ with c1:
                 # Analysis
                 ## Exploratory Data Analysis
                 This web application aims to perform an exploratory analysis on a set of data stored in csv format.
-                Please ensure that the csv file is separated by (;) and not by (.)
-                
+
                 Owner: Pedro G. Dubiela | pedro.dubielabio@gmail.com | https://github.com/pedroDubiela95
                 """)
 
 if file is not None:
-    
+     
     with tab1:
-        st.write("Sample", df.head().style.format(precision=2))
+        st.write("Sample", df.head(10).style.format(precision=2))
     
     with tab2:
-        st.write("Describe", df.describe().style.format(precision=2))
-    
-    with tab3:
         nans = df.isna().sum().to_frame(name = "NaN Quantity")
         st.write("NaN", nans)
     
 
 if file is not None:
 
-
-    # Definindo as numéricas
-    numerical_variables = numericals
-                  
-    # Definindo as categóricas (inclui numérica discreta)
-    categorical_variables = categoricals
-    
-    # Definindo target
-    target_variable = target
-    
-    df[numericals] = df[numericals].astype('float64')
-    
     if ready:
+        
         with c2:
+            tab3, tab4 = st.tabs(['Quantitative', 'Qualitative'])
             
-            for var in numericals:
-
-                st.markdown(var)
-                res = u.exploratory_data_analysis_numerical(df, var)
-                st.write(res.style.format(precision=2))
+            with tab3:
+            
+                if there_is_numericals:
+                    df[numericals] = df[numericals].astype('float64')
+                    for var in numericals:
+                        st.markdown(var)
+                        res = u.exploratory_data_analysis_numerical(df, var)
+                        st.write(res.style.format(precision=2))
+                    
+            with tab4:
+                
+                if there_is_categoricals:
+                    df[categoricals] = df[categoricals].astype('str')
+                    for var in categoricals:
+                        st.markdown(var)
+                        #res = u.exploratory_data_analysis_cat(df, var)
+                        #st.write(res.style.format(precision=2))
 
